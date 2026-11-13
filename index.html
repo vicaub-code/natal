@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{height:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Amigo Secreto da Família</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=swap">
+<style>
+/* Layout: cartaz naïf de guache e papel recortado (um só visual, sem tema escuro). Fundo creme liso, formas geométricas
+   chapadas, cinco cores. Uma coluna estreita; a árvore é o palco e as bolas são os botões. Medidas do palco em --u (1% da largura). */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF;
+  --surface: #F6F1E4;
+  --fg: #2B2A1A;
+  --muted: #4F4E3C;
+  --pine: #1F5A40;
+  --red: #E4512F;
+  --mustard: #E3A62A;
+  --blush: #F0B49C;
+  --alert: #9C2A12;
+  --hand: "Patrick Hand SC", "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--hand); font-size: 1.5rem; line-height: 1.25; letter-spacing: 0.02em;
+  padding-block: 12px 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 30rem; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.defs { position: absolute; width: 0; height: 0; }
+header { display: flex; flex-direction: column; gap: 0; }
+h1 {
+  font-weight: 400; font-size: min(2.7rem, 11vw); line-height: 1; margin: 0; text-transform: uppercase;
+  -webkit-text-stroke: 1.2px currentColor; letter-spacing: 0.04em;
+}
+.family { font-size: 1.5rem; line-height: 1.1; margin: 0; }
+h2 { font-weight: 400; font-size: 1.7rem; line-height: 1.1; margin: 0; text-transform: uppercase; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 14px; }
+#step-name { gap: 2px; }
+#hint { font-size: 1.25rem; line-height: 1.1; }
+.word { display: inline-block; white-space: nowrap; }
+.ch { display: inline-block; }
+
+/* Figuras */
+.fig { display: block; overflow: visible; filter: url(#paint); }
+.fig use { transform: rotate(var(--tilt, 0deg)); transform-box: fill-box; transform-origin: 50% 100%; }
+.cast { display: flex; justify-content: center; align-items: flex-end; gap: 4%; padding-block: 18px 6px; }
+.cast .fig { width: 13%; height: auto; aspect-ratio: 36 / 56; }
+
+/* Palco */
+.stage {
+  --u: calc(min(100vw - 32px, 30rem) / 100);
+  position: relative; width: calc(var(--u) * 100); margin-inline: auto; height: calc(var(--u) * 123); overflow: hidden;
+}
+.tree {
+  position: absolute; left: calc(var(--u) * 10); top: 0; width: calc(var(--u) * 80); height: calc(var(--u) * 122);
+  transform-origin: 50% 100%;
+}
+.tree svg { position: absolute; left: 0; top: 0; display: block; width: 100%; height: 100%; }
+.tree .art { filter: url(#paint); }
+.tree .lights { pointer-events: none; }
+.ballbtn {
+  position: absolute; width: calc(var(--u) * 14); height: calc(var(--u) * 14);
+  left: calc(var(--u) * (var(--cx) - 17)); top: calc(var(--u) * (var(--cy) - 7));
+  border-radius: 47% 53% 50% 50% / 52% 48% 53% 47%; border: 0; padding: 0; cursor: pointer;
+  background: var(--c); color: var(--fg);
+  font-family: var(--hand); font-size: calc(var(--u) * 5.6); line-height: 1; letter-spacing: 0;
+  filter: url(#paint);
+}
+.ballbtn::before {
+  content: ""; position: absolute; left: 50%; top: calc(var(--u) * -2.6); width: calc(var(--u) * 0.5); height: calc(var(--u) * 3);
+  background: var(--fg);
+}
+.ballbtn:hover { transform: scale(1.08); }
+.helper {
+  position: absolute; left: 0; top: calc(var(--u) * 108); width: calc(var(--u) * 9); height: calc(var(--u) * 14);
+  transform: translateX(calc(var(--u) * var(--x1)));
+}
+.helper .fig { width: 100%; height: 100%; }
+
+/* Botões, formulário e papelzinho */
+button { font: inherit; cursor: pointer; }
+.primary {
+  min-height: 66px; padding: 8px 22px; border: 0;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  background: var(--red); color: var(--fg); font-size: 2rem; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.link { background: none; border: 0; padding: 10px 4px; color: var(--pine); font-size: 1.5rem; text-decoration: underline; align-self: center; }
+:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+form { display: flex; flex-direction: column; gap: 12px; }
+input {
+  font: inherit; font-size: 2.1rem; width: 100%; min-height: 68px; padding: 6px 22px;
+  border-radius: 18px 225px 18px 255px / 255px 18px 225px 18px;
+  border: 3px solid var(--pine); background: var(--surface); color: var(--fg); text-align: center;
+}
+input:focus { outline: 3px solid var(--fg); outline-offset: 2px; }
+.error { color: var(--alert); }
+.slip {
+  position: relative; background: var(--surface); color: var(--fg); margin-top: 22px;
+  padding: 28px 16px 32px; text-align: center; display: flex; flex-direction: column; gap: 12px;
+  transform: rotate(-1.2deg);
+}
+.slip::before { content: ""; position: absolute; top: -22px; right: 22px; width: 44px; height: 44px; border-radius: 47% 53% 50% 50% / 52% 48% 53% 47%; background: var(--red); filter: url(#paint); }
+.slip .fold { border-top: 3px dotted var(--pine); }
+.slip .drawn { font-size: min(4.2rem, 17vw); line-height: 1; overflow-wrap: anywhere; color: var(--pine); min-height: 1em; text-transform: uppercase; -webkit-text-stroke: 1.2px currentColor; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ch { animation: write 0.13s linear both; }
+  @keyframes write { from { opacity: 0; clip-path: inset(-20% 100% -20% -20%); } to { opacity: 1; clip-path: inset(-20% -20% -20% -20%); } }
+
+  .stage { animation: thud 0.25s ease-out 3.6s; }
+  @keyframes thud { 40% { transform: translateY(calc(var(--u) * 0.7)); } }
+  .tree { animation: carry 4.4s both; }
+  @keyframes carry {
+    0%   { transform: translate(calc(var(--u) * -171), calc(var(--u) * -57)) rotate(112.2deg); animation-timing-function: linear; }
+    48%  { transform: translate(calc(var(--u) * -56), calc(var(--u) * -57)) rotate(112.2deg); animation-timing-function: ease-in-out; }
+    74%  { transform: translate(0, calc(var(--u) * -9)) rotate(0deg); animation-timing-function: ease-in; }
+    82%  { transform: translate(0, calc(var(--u) * 1.5)) rotate(0deg); }
+    88%, 100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  .helper { animation: walk 4.4s both; }
+  @keyframes walk {
+    0%   { transform: translateX(calc(var(--u) * (var(--x0) - 115))); animation-timing-function: linear; }
+    48%  { transform: translateX(calc(var(--u) * var(--x0))); animation-timing-function: ease-in-out; }
+    74%, 100% { transform: translateX(calc(var(--u) * var(--x1))); }
+  }
+  .helper .fig { animation: bob 0.26s ease-in-out 0s 8 alternate, hop 0.3s ease-out 3.7s 6 alternate; }
+  @keyframes bob { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(calc(var(--u) * -0.9)) rotate(3deg); } }
+  @keyframes hop { to { transform: translateY(calc(var(--u) * -2.2)); } }
+  .ballbtn { animation: pop 0.4s cubic-bezier(.3, 1.6, .5, 1) both; }
+  @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+  .tree .lights { animation: lightson 0.6s ease-out 4.1s both; }
+  @keyframes lightson { from { opacity: 0; } to { opacity: 1; } }
+  .bulb { animation: twinkle 1.3s ease-in-out infinite alternate; }
+  @keyframes twinkle { from { opacity: 0.3; } to { opacity: 1; } }
+  .slip { animation: unfold 0.5s ease-out; }
+  @keyframes unfold { from { transform: rotate(-1.2deg) scaleY(0.2); opacity: 0.4; } to { transform: rotate(-1.2deg) scaleY(1); opacity: 1; } }
+
+  .stage.done, .stage.done .tree, .stage.done .helper, .stage.done .helper .fig, .stage.done .ballbtn, .stage.done .lights { animation: none; }
+}
+</style>
+</head>
+<body>
+
+
+<svg class="defs" aria-hidden="true">
+  <defs>
+    <!-- Guache: borda levemente irregular e pequenas falhas claras de pincel, sem sombra. -->
+    <filter id="paint" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="7" result="w"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="3" result="d"></feDisplacementMap>
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.45" numOctaves="3" seed="2" result="t"></feTurbulence>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 0.98  0 0 0 0 0.95  0 0 0 0 0.88  0 0 0 0.42 0" result="thin"></feColorMatrix>
+      <feComposite in="thin" in2="d" operator="in" result="s2"></feComposite>
+      <feMerge><feMergeNode in="d"></feMergeNode></feMerge>
+    </filter>
+    <!-- Ajudante: trapézio, círculo e triângulo. -->
+    <symbol id="helper" viewBox="0 0 36 56">
+      <line x1="11.5" y1="26" x2="5.5" y2="8" style="stroke:var(--coat)" stroke-width="4.2"></line>
+      <line x1="24.5" y1="26" x2="30.5" y2="8" style="stroke:var(--coat)" stroke-width="4.2"></line>
+      <circle cx="5" cy="6" r="2.7" fill="#F0B49C"></circle>
+      <circle cx="31" cy="6" r="2.7" fill="#F0B49C"></circle>
+      <polygon points="14.6,44 13,44.2 12.6,55 14.8,55" fill="#2B2A1A"></polygon>
+      <polygon points="21.4,44 23.2,44 23.6,55 21.4,55.2" fill="#2B2A1A"></polygon>
+      <polygon points="11,22 25,22.6 30.4,45 5.8,44.4" style="fill:var(--coat)"></polygon>
+      <circle cx="18" cy="29.5" r="1" fill="#FBF6EA"></circle>
+      <circle cx="18.2" cy="35.5" r="1" fill="#FBF6EA"></circle>
+      <circle cx="18" cy="16.5" r="6.6" fill="#F0B49C"></circle>
+      <polygon points="10.6,13.4 25.6,13.8 19,0" style="fill:var(--hat)"></polygon>
+      <line x1="14.8" y1="8.6" x2="22" y2="8.9" stroke="#FBF6EA" stroke-width="1.3"></line>
+      <circle cx="15.8" cy="17.2" r="0.9" fill="#2B2A1A"></circle>
+      <circle cx="20.5" cy="17" r="0.9" fill="#2B2A1A"></circle>
+    </symbol>
+  </defs>
+</svg>
+
+<main>
+  <header>
+    <h1 id="title">Amigo secreto</h1>
+    <p class="family" id="family">da família Urbani!</p>
+  </header>
+
+  <section id="step-intro">
+    <div class="cast" aria-hidden="true">
+      <svg class="fig" viewBox="0 0 36 56" style="--coat:#E4512F;--hat:#E3A62A;--tilt:-6deg"><use href="#helper"></use></svg>
+      <svg class="fig" viewBox="0 0 36 56" style="--coat:#E3A62A;--hat:#E4512F;--tilt:4deg"><use href="#helper"></use></svg>
+      <svg class="fig" viewBox="0 0 36 56" style="--coat:#E4512F;--hat:#1F5A40;--tilt:-2deg"><use href="#helper"></use></svg>
+      <svg class="fig" viewBox="0 0 36 56" style="--coat:#E3A62A;--hat:#E4512F;--tilt:7deg"><use href="#helper"></use></svg>
+      <svg class="fig" viewBox="0 0 36 56" style="--coat:#E4512F;--hat:#E3A62A;--tilt:-4deg"><use href="#helper"></use></svg>
+    </div>
+    <button class="primary" type="button" id="start">Começar</button>
+  </section>
+
+  <section id="step-name" hidden>
+    <h2 id="ask">Quem é você?</h2>
+    <p class="muted" id="hint">Toque na bola com o seu nome.</p>
+    <div class="stage" id="stage">
+      <div class="tree" id="tree">
+        <svg class="art" viewBox="0 0 80 122" aria-hidden="true">
+          <polygon points="36,100 44.6,100.4 44,122 35.4,121.5" fill="#2B2A1A"></polygon>
+          <polygon points="21,62 59.5,61.6 79,99.4 41,101.4 1,100" fill="#1F5A40"></polygon>
+          <polygon points="31,34.4 49.6,34 70.4,71.6 40,72.8 10,72" fill="#1F5A40"></polygon>
+          <polygon points="40.6,8 57.2,41.6 40.4,42.8 23,42" fill="#1F5A40"></polygon>
+          <g id="hatch" stroke="#123A28" stroke-width="0.45" stroke-linecap="round" fill="none"></g>
+          <polygon points="40,0 42,5 47,6.5 42.2,8.3 40.5,13 38.4,8.2 33.5,6.3 38.3,5" fill="#E3A62A"></polygon>
+        </svg>
+        <svg class="lights" id="lights" viewBox="0 0 80 122" aria-hidden="true"></svg>
+      </div>
+      <div class="helper" style="--x0:2;--x1:4;--coat:#E4512F;--hat:#E3A62A;--tilt:-5deg"><svg class="fig" viewBox="0 0 36 56" aria-hidden="true"><use href="#helper"></use></svg></div>
+      <div class="helper" style="--x0:21;--x1:17;--coat:#E3A62A;--hat:#E4512F;--tilt:4deg"><svg class="fig" viewBox="0 0 36 56" aria-hidden="true"><use href="#helper"></use></svg></div>
+      <div class="helper" style="--x0:40;--x1:30;--coat:#E4512F;--hat:#1F5A40;--tilt:-2deg"><svg class="fig" viewBox="0 0 36 56" aria-hidden="true"><use href="#helper"></use></svg></div>
+      <div class="helper" style="--x0:59;--x1:62;--coat:#E3A62A;--hat:#E4512F;--tilt:6deg"><svg class="fig" viewBox="0 0 36 56" aria-hidden="true"><use href="#helper"></use></svg></div>
+      <div class="helper" style="--x0:78;--x1:78;--coat:#E4512F;--hat:#E3A62A;--tilt:-4deg"><svg class="fig" viewBox="0 0 36 56" aria-hidden="true"><use href="#helper"></use></svg></div>
+    </div>
+  </section>
+
+  <section id="step-code" hidden>
+    <h2>Olá, <span id="hello"></span>!</h2>
+    <form id="code-form" novalidate>
+      <label for="code">Digite o seu código secreto</label>
+      <input id="code" name="code" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+      <p class="error" id="error" role="alert" hidden>Esse código não confere. Veja de novo a mensagem que você recebeu.</p>
+      <button class="primary" type="submit">Ver quem eu tirei</button>
+    </form>
+    <button class="link" type="button" id="back">Não sou eu, voltar</button>
+  </section>
+
+  <section id="step-reveal" hidden>
+    <div class="slip">
+      <p class="who"><span id="who"></span>, você tirou</p>
+      <div class="fold"></div>
+      <p class="drawn" id="drawn"></p>
+    </div>
+    <p class="muted">Guarde segredo até o dia da troca.</p>
+    <button class="primary" type="button" id="close">Esconder e fechar</button>
+  </section>
+</main>
+
+<script>
+var DATA = {"Bisa":"56e07fa20d851c69475a","Lili":"3926cf9536f49eaa58","Vic":"997637dff09388193a4f","Gabi":"0e5ac33c86fc6cc6be9d","Raul":"5424eb64209652e4d42d","Manu":"3d24549f9f7120c3","Mila":"4d5f83cb192b9e122cd4","Rafa":"9a4d3e7775ba52304072","Ju":"753f1cfaa2b11ab5e5e1","Vera":"8ee8119c2fa2614e9824"};
+var MARK = "amigo:";
+/* Como as crianças chamam algumas pessoas: o nome sorteado aparece do jeito delas. */
+var KIDS = { "Ju": "Dedé", "Gabi": "Tia Bi" };
+var NICK = { "Manu": KIDS, "Raul": KIDS };
+
+function norm(s) {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+function stream(seed, n) {
+  var h = 1779033703 ^ seed.length, i;
+  for (i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  var out = [];
+  for (i = 0; i < n; i++) {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    var a = (h >>> 0) + 0x6D2B79F5 * (i + 1);
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    out.push(((t ^ (t >>> 14)) >>> 0) & 255);
+  }
+  return out;
+}
+function open(name, code) {
+  var hex = DATA[name], n = hex.length / 2, k = stream(norm(name) + "|" + norm(code), n), bytes = new Uint8Array(n);
+  for (var i = 0; i < n; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16) ^ k[i];
+  var text;
+  try { text = new TextDecoder("utf-8", { fatal: true }).decode(bytes); } catch (e) { return null; }
+  return text.indexOf(MARK) === 0 ? text.slice(MARK.length) : null;
+}
+
+var $ = function (id) { return document.getElementById(id); };
+var moving = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches);
+var stage = $("stage");
+
+/* Sons feitos na hora (sem arquivos): risquinho, passinhos e a batida da árvore. */
+var ctx = null, master = null, noiseBuf = null, wall0 = 0, pending = [];
+function initAudio() {
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    var d = noiseBuf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    var b = ctx.createBufferSource(); b.buffer = ctx.createBuffer(1, 1, ctx.sampleRate); b.connect(ctx.destination); b.start(0);
+    ctx.addEventListener("statechange", flush);
+    var p = ctx.resume && ctx.resume(); if (p && p.then) p.then(flush, function () {});
+    keepAwake();
+  } catch (e) { ctx = null; }
+}
+/* Os sons só são agendados quando o áudio está de fato rodando; até lá ficam na fila. */
+function flush() {
+  if (!ctx || ctx.state !== "running") return;
+  var q = pending; pending = []; q.forEach(function (run) { run(); });
+}
+function sched(delay, fn) {
+  if (!ctx) return;
+  var due = performance.now() + delay * 1000;
+  var run = function () { var d = (due - performance.now()) / 1000; if (d > -0.05) fn(ctx.currentTime + Math.max(0, d)); };
+  if (ctx.state === "running") run(); else pending.push(run);
+}
+/* No iPhone, um áudio silencioso em repetição faz o som sair mesmo com a chave de silêncio ligada. */
+function keepAwake() {
+  try {
+    var n = 800, w = new Uint8Array(44 + n), v = new DataView(w.buffer), s = "", i;
+    function txt(o, str) { for (var j = 0; j < str.length; j++) w[o + j] = str.charCodeAt(j); }
+    txt(0, "RIFF"); v.setUint32(4, 36 + n, true); txt(8, "WAVEfmt "); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true);
+    v.setUint16(32, 1, true); v.setUint16(34, 8, true); txt(36, "data"); v.setUint32(40, n, true);
+    for (i = 44; i < w.length; i++) w[i] = 128;
+    for (i = 0; i < w.length; i++) s += String.fromCharCode(w[i]);
+    var a = new Audio("data:audio/wav;base64," + btoa(s));
+    a.loop = true; a.setAttribute("playsinline", "");
+    var pr = a.play(); if (pr && pr.catch) pr.catch(function () {});
+  } catch (e) {}
+}
+document.addEventListener("pointerdown", function () {
+  if (ctx && ctx.state !== "running" && ctx.resume) { var p = ctx.resume(); if (p && p.then) p.then(flush, function () {}); }
+}, true);
+function noise(t, dur, type, freq, q, peak) {
+  var s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  s.buffer = noiseBuf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + Math.min(0.012, dur / 3));
+  g.gain.linearRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(master);
+  s.start(t, Math.random() * 0.8); s.stop(t + dur + 0.03);
+}
+function tone(t, dur, f1, f2, peak) {
+  var o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(peak, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.03);
+}
+function scratch(t, dur) { noise(t, dur, "bandpass", 2200 + Math.random() * 2600, 0.9, 0.1); }
+function footstep(t) { tone(t, 0.08, 150 + Math.random() * 40, 85, 0.18); noise(t, 0.05, "lowpass", 700, 0.5, 0.08); }
+function thud(t) { tone(t, 0.32, 110, 38, 0.6); noise(t, 0.18, "lowpass", 300, 0.5, 0.3); }
+
+/* Escreve o texto letra por letra, com o risquinho; cada letra sai um pouco torta, como à mão. */
+function write(el, start, per) {
+  if (!moving) return start;
+  var text = el.getAttribute("aria-label") || el.textContent, t = start;
+  el.textContent = ""; el.setAttribute("aria-label", text);
+  text.split(" ").forEach(function (w, wi) {
+    if (wi) el.appendChild(document.createTextNode(" "));
+    var word = document.createElement("span"); word.className = "word"; word.setAttribute("aria-hidden", "true");
+    Array.prototype.forEach.call(w, function (c) {
+      var s = document.createElement("span"); s.className = "ch"; s.textContent = c;
+      s.style.animationDelay = t + "s";
+      s.style.transform = "rotate(" + (Math.random() * 6 - 3).toFixed(1) + "deg) translateY(" + (Math.random() * 2.4 - 1.2).toFixed(1) + "px)";
+      sched(t, function (at) { scratch(at, per * 0.85); });
+      t += per; word.appendChild(s);
+    });
+    el.appendChild(word); t += per;
+  });
+  return t;
+}
+
+/* Bolas com os nomes: fileiras de 1, 2, 3 e 4 na árvore. */
+var SPOTS = [[50,31],[40.75,51],[59.25,51],[31.5,71],[50,71],[68.5,71],[22.25,91],[40.75,91],[59.25,91],[77.75,91]];
+var COLORS = ["#E4512F", "#E3A62A", "#FBF6EA"];
+var current = null;
+Object.keys(DATA).forEach(function (name, i) {
+  var spot = SPOTS[i % SPOTS.length], b = document.createElement("button");
+  b.type = "button"; b.className = "ballbtn"; b.textContent = name;
+  b.style.setProperty("--cx", spot[0]); b.style.setProperty("--cy", spot[1]);
+  b.style.setProperty("--c", COLORS[i % COLORS.length]);
+  b.style.animationDelay = (4.3 + i * 0.09) + "s";
+  b.addEventListener("click", function () {
+    current = name; $("hello").textContent = name; $("code").value = ""; $("error").hidden = true;
+    finish(); show("step-code"); $("code").focus();
+  });
+  $("tree").appendChild(b);
+});
+
+/* Luzinhas: linhas pontilhadas, levemente tortas, entre as fileiras de bolas. */
+(function () {
+  var NS = "http://www.w3.org/2000/svg", svg = $("lights"), k = 0;
+  [[41, 1.2], [61, -1.6], [81, 1.4]].forEach(function (row) {
+    var y = row[0], slope = row[1], hw = (y - 8) / 92 * 39 - 3.5, n = Math.round(hw * 2 / 3.3);
+    for (var i = 0; i <= n; i++) {
+      var f = i / n, d = document.createElementNS(NS, "circle");
+      d.setAttribute("cx", (40.5 - hw + f * hw * 2).toFixed(2));
+      d.setAttribute("cy", (y + (f - 0.5) * 2 * slope + (k % 2 ? 0.25 : -0.25)).toFixed(2));
+      d.setAttribute("r", k % 3 === 0 ? 1.05 : 0.85);
+      d.setAttribute("fill", k % 3 === 0 ? "#E3A62A" : "#FBF6EA");
+      d.setAttribute("class", "bulb");
+      d.style.animationDelay = (-(k * 0.37) % 1.3) + "s"; d.style.animationDuration = (1 + (k % 4) * 0.25) + "s";
+      svg.appendChild(d); k++;
+    }
+  });
+})();
+
+/* Rabisco de lápis: traços em leque descendo por cada andar da árvore. */
+(function () {
+  var NS = "http://www.w3.org/2000/svg", g = $("hatch"), seed = 11;
+  function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+  [[10, 1, 41, 16, 14], [36, 9.5, 71, 29, 24], [64, 19.5, 99, 38, 32]].forEach(function (tier) {
+    for (var i = 0; i <= tier[4]; i++) {
+      var a = -0.94 + 1.88 * i / tier[4], l = document.createElementNS(NS, "line");
+      l.setAttribute("x1", (40.5 + a * tier[1] + rnd() - 0.5).toFixed(2));
+      l.setAttribute("y1", (tier[0] + 2 + rnd() * 5).toFixed(2));
+      l.setAttribute("x2", (40.5 + a * tier[3] + rnd() - 0.5).toFixed(2));
+      l.setAttribute("y2", (tier[2] - 1.5 - rnd() * 6).toFixed(2));
+      g.appendChild(l);
+    }
+  });
+})();
+
+/* O palco encolhe para caber na altura da tela, sem rolagem. */
+function fit() {
+  var box = stage.parentElement; if (!box.clientWidth) return;
+  var top = stage.getBoundingClientRect().top + (window.scrollY || 0);
+  var avail = window.innerHeight - top - 12;
+  var u = Math.max(2.3, Math.min(box.clientWidth / 100, avail / 123));
+  stage.style.setProperty("--u", u + "px");
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+window.addEventListener("resize", fit);
+
+function show(step) {
+  ["step-intro", "step-name", "step-code", "step-reveal"].forEach(function (s) { $(s).hidden = s !== step; });
+  window.scrollTo(0, 0);
+}
+function finish() {
+  if (stage.classList.contains("done")) return;
+  stage.classList.add("done");
+  if (ctx && performance.now() < wall0 + 6200) {
+    pending = []; master.gain.value = 0;
+    setTimeout(function () { master.gain.value = 0.9; }, Math.max(0, wall0 + 6400 - performance.now()));
+  }
+}
+$("start").addEventListener("click", function () {
+  if (moving) initAudio();
+  show("step-name"); fit();
+  if (!moving) { stage.classList.add("done"); return; }
+  wall0 = performance.now();
+  for (var t = 0.05; t < 3.3; t += 0.13) sched(t, footstep);
+  sched(3.62, thud);
+  var end = write($("title"), 0.3, 0.09);
+  write($("family"), end + 0.1, 0.07);
+  write($("ask"), 4.3, 0.07);
+  setTimeout(finish, 6300);
+});
+stage.addEventListener("click", finish);
+
+function reset() {
+  current = null; $("code").value = ""; $("error").hidden = true;
+  $("drawn").textContent = ""; $("drawn").removeAttribute("aria-label"); show("step-name"); fit();
+}
+$("code-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var got = current && $("code").value.trim() ? open(current, $("code").value) : null;
+  if (!got) { $("error").hidden = false; $("code").focus(); return; }
+  $("who").textContent = current;
+  $("drawn").removeAttribute("aria-label"); $("drawn").textContent = (NICK[current] && NICK[current][got]) || got;
+  show("step-reveal"); write($("drawn"), 0.7, 0.24);
+});
+$("back").addEventListener("click", reset);
+$("close").addEventListener("click", reset);
+</script>
+
+</body>
+</html>
